@@ -30,7 +30,6 @@ public class DataSourceRouter extends AbstractRoutingDataSource {
         if (DataSourceHolder.isMaster()) {
             return master;
         } else if (DataSourceHolder.isSlave()) {
-            // selector = new SequenceDataSourceSelector();
             DataSource ds = selector.select(slaves);
             return ds;
         } else {

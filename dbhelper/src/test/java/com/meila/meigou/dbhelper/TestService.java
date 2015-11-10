@@ -32,7 +32,7 @@ public class TestService {
 
     @Test
     public void testGet() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
             StudentEntity entity = service.get(1);
             System.out.println(entity.getName());
         }

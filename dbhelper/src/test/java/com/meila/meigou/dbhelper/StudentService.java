@@ -4,6 +4,7 @@
 package com.meila.meigou.dbhelper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.meila.meigou.dbhelper.db.StudentEntity;
 import com.meila.meigou.dbhelper.db.StudentEntityMapper;
@@ -17,6 +18,7 @@ import com.meila.meigou.dbhelper.db.StudentEntityMapper;
  * @DATE : 2015年11月9日
  ************************************************************
  */
+@Service
 public class StudentService {
     @Autowired
     private StudentEntityMapper mapper;

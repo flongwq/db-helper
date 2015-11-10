@@ -26,6 +26,8 @@
 	<context:annotation-config />
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 	
+	<context:component-scan base-package="com.meila.meigou" />
+	
 	<bean id="masterDataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">
 		<property name="url" value="${jdbc.url}" />
@@ -68,11 +70,13 @@
 				<ref bean="slaveDataSource02" />
 			</list>
 		</property>
-		<property name="selector" >
-			<bean class="com.meila.meigou.dbhelper.SequenceDataSourceSelector" ></bean>
+		<property name="selector" ref="dataSourceSelector">
+
 		</property>
 	</bean>
-
+	<bean id="dataSourceSelector" class="com.meila.meigou.dbhelper.SequenceDataSourceSelector">
+    </bean>
+    
 	<bean id="transactionManager"
 		class="com.meila.meigou.dbhelper.MSDataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />  
@@ -84,8 +88,6 @@
 		<property name="mapperLocations" value="classpath:mybatis/*Mapper.xml" />
 	</bean>
 	
-	<bean class="com.meila.meigou.dbhelper.StudentService"></bean>
-
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 		<tx:method name="select*" read-only="true" />
@@ -98,7 +100,7 @@
 
 	<aop:config>
 		<aop:pointcut id="allManagerMethod"
-			expression="execution(* com.meila.meigou.dbhelper.*.*(..))" />
+			expression="execution(* com.meila.meigou.dbhelper.StudentService.*(..))" />
 		<aop:advisor pointcut-ref="allManagerMethod" advice-ref="txAdvice" />
 	</aop:config>
 
