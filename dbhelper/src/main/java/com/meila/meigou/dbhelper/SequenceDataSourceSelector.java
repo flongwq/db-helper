@@ -17,13 +17,15 @@ import javax.sql.DataSource;
  * @DATE : 2015年11月9日
  ************************************************************
  */
+
 public class SequenceDataSourceSelector implements DataSourceSelector {
     private static AtomicInteger cal = new AtomicInteger();
 
+    @Override
     public DataSource select(List<DataSource> slaveDataSources) {
         int index = cal.getAndIncrement();
         if (index >= slaveDataSources.size()) {
-            cal.set(0);
+            cal.set(1);
             index = 0;
         }
         return slaveDataSources.get(index);

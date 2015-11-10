@@ -19,6 +19,7 @@ public class MSDataSourceTransactionManager extends DataSourceTransactionManager
 
     @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) {
+
         boolean readOnly = definition.isReadOnly();
         if (readOnly) {
             DataSourceHolder.setSlave();

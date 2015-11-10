@@ -15,7 +15,7 @@ package com.meila.meigou.dbhelper;
 public class DataSourceHolder {
     public final static String MASTER = "MasterDataSource";
     public final static String SLAVE = "SlaveDataSource";
-    private final static ThreadLocal<String> datasource = new ThreadLocal<String>();
+    private static ThreadLocal<String> datasource = new ThreadLocal<String>();
 
     public static String getMaster() {
         return MASTER;

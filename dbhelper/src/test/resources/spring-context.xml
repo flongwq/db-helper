@@ -20,11 +20,12 @@
         http://www.springframework.org/schema/aop/spring-aop.xsd
        http://mybatis.org/schema/mybatis-spring
         http://mybatis.org/schema/mybatis-spring.xsd" 
-        default-autowire="byName">
+        default-autowire="byType">
 	
 	<tx:annotation-driven />
 	<context:annotation-config />
 	<aop:aspectj-autoproxy proxy-target-class="true" />
+	
 	<bean id="masterDataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">
 		<property name="url" value="${jdbc.url}" />
@@ -34,8 +35,7 @@
 		<property name="initialSize" value="5" />
 		<property name="minIdle" value="5" />
 		<property name="maxActive" value="20" />
-		<!-- 配置监控统计拦截的filters -->
-		<property name="filters" value="stat,slf4j" />
+		
 	</bean>
 	<bean id="slaveDataSource01" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">
@@ -46,8 +46,7 @@
 		<property name="initialSize" value="5" />
 		<property name="minIdle" value="5" />
 		<property name="maxActive" value="20" />
-		<!-- 配置监控统计拦截的filters -->
-		<property name="filters" value="stat,slf4j" />
+		
 	</bean>
 	<bean id="slaveDataSource02" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">
@@ -58,8 +57,7 @@
 		<property name="initialSize" value="5" />
 		<property name="minIdle" value="5" />
 		<property name="maxActive" value="20" />
-		<!-- 配置监控统计拦截的filters -->
-		<property name="filters" value="stat,slf4j" />
+		
 	</bean>
 
 	<bean id="dataSource" class="com.meila.meigou.dbhelper.DataSourceRouter">
@@ -70,8 +68,8 @@
 				<ref bean="slaveDataSource02" />
 			</list>
 		</property>
-		<property name="selector">
-			<bean class="com.meila.meigou.dbhelper.SequenceDataSourceSelector"></bean>
+		<property name="selector" >
+			<bean class="com.meila.meigou.dbhelper.SequenceDataSourceSelector" ></bean>
 		</property>
 	</bean>
 
@@ -86,17 +84,14 @@
 		<property name="mapperLocations" value="classpath:mybatis/*Mapper.xml" />
 	</bean>
 	
-	<!-->bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-		<property name="dataSource" ref="dataSource" />
-	</bean-->
-
 	<bean class="com.meila.meigou.dbhelper.StudentService"></bean>
 
-	<aop:aspectj-autoproxy proxy-target-class="true" />
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
+		<tx:method name="select*" read-only="true" />
 			<tx:method name="get*" read-only="true" />
 			<tx:method name="save*" read-only="false" />
+			<tx:method name="update*" read-only="false" />
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
