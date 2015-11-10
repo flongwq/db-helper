@@ -20,7 +20,7 @@ public class MSDataSourceTransactionManager extends DataSourceTransactionManager
     @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) {
         // 当有annotation时不再根据definition分派
-        if (DataSourceHolder.getMaster() == null && DataSourceHolder.getSlave() == null) {
+        if (DataSourceHolder.isNull()) {
             boolean readOnly = definition.isReadOnly();
             if (readOnly) {
                 DataSourceHolder.setSlave();

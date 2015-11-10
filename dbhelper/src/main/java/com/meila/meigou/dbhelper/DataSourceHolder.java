@@ -41,6 +41,10 @@ public class DataSourceHolder {
         return datasource.get() == SLAVE;
     }
 
+    public static boolean isNull() {
+        return datasource.get() == null;
+    }
+
     public static void clear() {
         datasource.remove();
     }
