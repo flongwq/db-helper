@@ -6,7 +6,6 @@ package com.meila.meigou.dbhelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.meila.meigou.dbhelper.annotation.Slave;
 import com.meila.meigou.dbhelper.db.StudentEntity;
 import com.meila.meigou.dbhelper.db.StudentEntityMapper;
 
@@ -29,7 +28,7 @@ public class StudentService {
         return mapper.selectByPrimaryKey(id);
     }
 
-    @Slave
+    // @Slave
     public void update(StudentEntity entity) {
         mapper.updateByPrimaryKey(entity);
     }

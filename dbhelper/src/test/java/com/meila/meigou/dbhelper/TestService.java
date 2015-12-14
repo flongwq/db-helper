@@ -3,6 +3,9 @@
  */
 package com.meila.meigou.dbhelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -48,5 +51,13 @@ public class TestService {
         entity.setScore(30);
         service.update(entity);
         System.out.println("ok");
+    }
+
+    @Test
+    public void test() {
+        Long max = 2199023255552L;
+        Date date = new Date(max);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println(sdf.format(date));
     }
 }
