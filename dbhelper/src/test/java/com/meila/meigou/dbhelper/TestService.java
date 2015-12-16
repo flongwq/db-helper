@@ -3,9 +3,6 @@
  */
 package com.meila.meigou.dbhelper;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -15,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.meila.meigou.dbhelper.db.StudentEntity;
+import com.meila.meigou.dbhelper.service.StudentService;
 
 /**
  ************************************************************
@@ -55,9 +53,20 @@ public class TestService {
 
     @Test
     public void test() {
-        Long max = 2199023255552L;
-        Date date = new Date(max);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println(sdf.format(date));
+        try {
+            service.transaction(1);
+            // StudentEntity entity = service.get(1);
+            // System.out.println("select 1:" + entity.getName());
+            // entity.setId(1);
+            // entity.setName("flongnew");
+            // entity.setScore(30);
+            // service.update(entity);
+            // System.out.println("update:" + entity.getName());
+            // entity = service.get(1);
+            // System.out.println("select 2:" + entity.getName());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

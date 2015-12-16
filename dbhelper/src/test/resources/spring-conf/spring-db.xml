@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://mybatis.org/schema/mybatis-spring
+        http://mybatis.org/schema/mybatis-spring.xsd" 
+        default-autowire="byType">
+	
+	<tx:annotation-driven />
+	<context:annotation-config />
+	<aop:aspectj-autoproxy />
+	
+	<bean id="masterDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="5" />
+		<property name="minIdle" value="5" />
+		<property name="maxActive" value="20" />
+		
+	</bean>
+	<bean id="slaveDataSource01" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url" value="${jdbc.url01}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="5" />
+		<property name="minIdle" value="5" />
+		<property name="maxActive" value="20" />
+		
+	</bean>
+	<bean id="slaveDataSource02" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url" value="${jdbc.url02}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="5" />
+		<property name="minIdle" value="5" />
+		<property name="maxActive" value="20" />
+		
+	</bean>
+
+	<bean id="dataSource" class="com.meila.meigou.dbhelper.DataSourceRouter">
+		<property name="master" ref="masterDataSource" />
+		<property name="slaves">
+			<list>
+				<ref bean="slaveDataSource01" />
+				<ref bean="slaveDataSource02" />
+			</list>
+		</property>
+		<property name="selector" ref="dataSourceSelector">
+
+		</property>
+	</bean>
+	<bean id="dataSourceSelector" class="com.meila.meigou.dbhelper.SequenceDataSourceSelector">
+    </bean>
+    
+	<bean id="transactionManager"
+		class="com.meila.meigou.dbhelper.MSDataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />  
+	</bean>
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mybatis/*Mapper.xml" />
+	</bean>
+	
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="select*" read-only="true" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="save*" read-only="false" />
+			<tx:method name="update*" read-only="false" />
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="allManagerMethod"
+			expression="execution(* com.meila.meigou.dbhelper.service.*.*(..))" />
+		<aop:advisor pointcut-ref="allManagerMethod" advice-ref="txAdvice" />
+	</aop:config>
+	
+	<aop:config expose-proxy="true">
+<!-- 		<aop:pointcut id="pointcutDao" -->
+<!-- 			expression="execution(* com.meila.meigou.dbhelper.db.StudentEntityMapper.*(..))" /> -->
+<aop:pointcut id="pointcutDao"
+			expression="execution(* com.meila.meigou.dbhelper.service.*.*(..))" />
+    	<aop:aspect order="-2147483648" ref="readWriteProcessor">  
+       		<aop:around pointcut-ref="pointcutDao" method="determineReadOrWrite"/>  
+    	</aop:aspect> 
+	</aop:config>
+
+	<bean id="readWriteProcessor" class="com.meila.meigou.dbhelper.DataSourceReadWriteProcessor">  
+	    <property name="forceReadOnMaster" value="false"/>  
+ 	</bean> 
+
+	<mybatis:scan base-package="com.meila.meigou.dbhelper.db" />
+	
+</beans>
