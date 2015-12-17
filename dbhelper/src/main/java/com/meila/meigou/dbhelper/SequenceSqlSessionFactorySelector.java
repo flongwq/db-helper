@@ -28,6 +28,7 @@ public class SequenceSqlSessionFactorySelector implements SqlSessionFactorySelec
             cal.set(1);
             index = 0;
         }
-        return slaves.get(index);
+        SqlSessionFactory sqlSessionFactory = slaves.get(index);
+        return sqlSessionFactory;
     }
 }

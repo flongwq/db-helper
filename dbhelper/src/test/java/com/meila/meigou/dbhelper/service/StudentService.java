@@ -51,18 +51,19 @@ public class StudentService {
         System.out.println("start");
         StudentEntity entity = mapper.selectByPrimaryKey(id);
         System.out.println("select 1:" + entity.getName());
+
+        StudentEntity entity2 = new StudentEntity();
+        entity2.setId(1);
+        entity2.setName("new");
+        int result = mapper.updateByPrimaryKey(entity2);
+        System.out.println("update:" + result);
         //
-        // entity.setName("new");
-        // int result = mapper.updateByPrimaryKey(entity);
-        // System.out.println("update:" + result);
-        TeacherEntity teacherEntity = new TeacherEntity();
-        teacherEntity.setId(1);
-        teacherEntity.setName("new");
-        int result = teacherEntityMapper.updateByPrimaryKey(teacherEntity);
-        // entity.setName(null);
-        // result = mapper.updateByPrimaryKey(entity);
         // entity = mapper.selectByPrimaryKey(id);
         // System.out.println("select 2:" + entity.getName());
+        for (int i = 0; i < 10; i++) {
+            StudentEntity entityi = mapper.selectByPrimaryKey(id);
+            System.out.println("select " + i + ":" + entityi.getName());
+        }
     }
 
     public void transaction2(int id) throws Exception {

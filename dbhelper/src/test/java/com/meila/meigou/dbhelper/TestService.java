@@ -57,8 +57,8 @@ public class TestService {
     @Test
     public void test() {
         try {
-            // service.transaction(1);
-            service.transaction2(1);
+            service.transaction(1);
+            // service.transaction2(1);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

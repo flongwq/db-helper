@@ -85,6 +85,7 @@ public class ReadWriteSqlSessionTemplate extends SqlSessionTemplate {
         }
         if (DataSourceHolder.isSlave()) {
             targetSqlSessionFactory = selector.select(slaveSqlSessionFactorys);
+            System.out.println("选择器运行");
         }
         if (targetSqlSessionFactory != null) {
             return targetSqlSessionFactory;
@@ -303,12 +304,16 @@ public class ReadWriteSqlSessionTemplate extends SqlSessionTemplate {
 
     private class SqlSessionInterceptor implements InvocationHandler {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            System.out.println("method:" + method.getName());
-            final SqlSession sqlSession = getSqlSession(ReadWriteSqlSessionTemplate.this.getSqlSessionFactory(),
-                ReadWriteSqlSessionTemplate.this.executorType, ReadWriteSqlSessionTemplate.this.exceptionTranslator);
+            // System.out.println("method:" + method.getName());
+            // if (method.getName().startsWith("select")) {
+            // System.out.println("isSelect");
+            // }
+            final SqlSessionFactory sqlSessionFactory = ReadWriteSqlSessionTemplate.this.getSqlSessionFactory();
+            final SqlSession sqlSession = getSqlSession(sqlSessionFactory, ReadWriteSqlSessionTemplate.this.executorType,
+                ReadWriteSqlSessionTemplate.this.exceptionTranslator);
             try {
                 Object result = method.invoke(sqlSession, args);
-                if (!isSqlSessionTransactional(sqlSession, ReadWriteSqlSessionTemplate.this.getSqlSessionFactory())) {
+                if (!isSqlSessionTransactional(sqlSession, sqlSessionFactory)) {
                     // force commit even on non-dirty sessions because some databases require
                     // a commit/rollback before calling close()
                     sqlSession.commit(true);
@@ -325,7 +330,7 @@ public class ReadWriteSqlSessionTemplate extends SqlSessionTemplate {
                 }
                 throw unwrapped;
             } finally {
-                closeSqlSession(sqlSession, ReadWriteSqlSessionTemplate.this.getSqlSessionFactory());
+                closeSqlSession(sqlSession, sqlSessionFactory);
             }
         }
     }
