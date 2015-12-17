@@ -60,26 +60,6 @@
 		
 	</bean>
 
-	<bean id="dataSource" class="com.meila.meigou.dbhelper.DataSourceRouter">
-		<property name="master" ref="masterDataSource" />
-		<property name="slaves">
-			<list>
-				<ref bean="slaveDataSource01" />
-				<ref bean="slaveDataSource02" />
-			</list>
-		</property>
-		<property name="selector" ref="dataSourceSelector">
-
-		</property>
-	</bean>
-	<bean id="dataSourceSelector" class="com.meila.meigou.dbhelper.SequenceDataSourceSelector">
-    </bean>
-    
-	<bean id="transactionManager"
-		class="com.meila.meigou.dbhelper.MSDataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />  
-	</bean>
-
 	<bean id="masterSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="masterDataSource" />
 		<property name="configLocation" value="classpath:/mybatis-config.xml" />
@@ -96,6 +76,27 @@
 		<property name="mapperLocations" value="classpath:mybatis/*Mapper.xml" />
 	</bean>
 	
+	<!-- 事务控制 只在master进行事务处理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="masterDataSource" />  
+	</bean>
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="select*" read-only="true" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="save*" read-only="false" />
+			<tx:method name="update*" read-only="false" />
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
+		<aop:pointcut id="allManagerMethod"
+			expression="execution(* com.meila.meigou.dbhelper.service.*.*(..))" />
+		<aop:advisor pointcut-ref="allManagerMethod" advice-ref="txAdvice" />
+	</aop:config>
+	
+	<!-- 读写分离 -->
 	<bean id="sqlSessionTemplate" class="com.meila.meigou.dbhelper.ReadWriteSqlSessionTemplate" scope="prototype">
 		<constructor-arg ref="masterSqlSessionFactory" />
         <property name="slaveSqlSessionFactorys">
@@ -108,34 +109,19 @@
     </bean>
 	<bean id="sqlSessionFactorySelector" class="com.meila.meigou.dbhelper.SequenceSqlSessionFactorySelector" />
 	
-	<tx:advice id="txAdvice" transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="select*" read-only="true" />
-			<tx:method name="get*" read-only="true" />
-			<tx:method name="save*" read-only="false" />
-			<tx:method name="update*" read-only="false" />
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-
-	<aop:config>
-		<aop:pointcut id="allManagerMethod"
-			expression="execution(* com.meila.meigou.dbhelper.service.*.*(..))" />
-		<aop:advisor pointcut-ref="allManagerMethod" advice-ref="txAdvice" />
-	</aop:config>
+	<mybatis:scan base-package="com.meila.meigou.dbhelper.db" template-ref="sqlSessionTemplate" />
 	
 	<aop:config expose-proxy="true">
 		<aop:pointcut id="pointcutDao"
-			expression="execution(* com.meila.meigou.dbhelper.db.StudentEntityMapper.*(..))" />
+			expression="execution(* com.meila.meigou.dbhelper.db.*Mapper.*(..))" />
     	<aop:aspect order="-2147483648" ref="readWriteProcessor">  
        		<aop:around pointcut-ref="pointcutDao" method="determineReadOrWrite"/>  
     	</aop:aspect> 
 	</aop:config>
-
 	<bean id="readWriteProcessor" class="com.meila.meigou.dbhelper.DataSourceReadWriteProcessor">  
 	    <property name="forceReadOnMaster" value="false"/>  
  	</bean> 
 
-	<mybatis:scan base-package="com.meila.meigou.dbhelper.db" template-ref="sqlSessionTemplate" />
+	
 	
 </beans>

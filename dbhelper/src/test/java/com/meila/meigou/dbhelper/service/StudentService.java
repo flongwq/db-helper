@@ -35,6 +35,8 @@ public class StudentService {
     // @Slave
     public void update(StudentEntity entity) {
         mapper.updateByPrimaryKey(entity);
+        entity.setName(null);
+        mapper.updateByPrimaryKey(entity);
     }
 
     public void delete(int id) throws Exception {
@@ -49,12 +51,37 @@ public class StudentService {
         System.out.println("start");
         StudentEntity entity = mapper.selectByPrimaryKey(id);
         System.out.println("select 1:" + entity.getName());
+        //
+        // entity.setName("new");
+        // int result = mapper.updateByPrimaryKey(entity);
+        // System.out.println("update:" + result);
         TeacherEntity teacherEntity = new TeacherEntity();
         teacherEntity.setId(1);
         teacherEntity.setName("new");
-        teacherEntityMapper.updateByPrimaryKey(teacherEntity);
-        System.out.println("update:" + teacherEntity.getName());
-        // delete(-100);// 异常回滚
+        int result = teacherEntityMapper.updateByPrimaryKey(teacherEntity);
+        // entity.setName(null);
+        // result = mapper.updateByPrimaryKey(entity);
+        // entity = mapper.selectByPrimaryKey(id);
+        // System.out.println("select 2:" + entity.getName());
+    }
+
+    public void transaction2(int id) throws Exception {
+        TeacherEntity teacherEntity = new TeacherEntity();
+        teacherEntity.setId(1);
+        teacherEntity.setName("teachernew");
+        int result = teacherEntityMapper.updateByPrimaryKey(teacherEntity);
+        TeacherEntity teacherEntity2 = teacherEntityMapper.test(1);
+        System.out.println(teacherEntity2.getName());
+        // 先查询
+        System.out.println("start");
+        StudentEntity entity = mapper.selectByPrimaryKey(id);
+        System.out.println("select 1:" + entity.getName());
+        entity.setName("studentnew");
+        result = mapper.updateByPrimaryKey(entity);
+        System.out.println("update:" + result);
+
+        // entity.setName(null);
+        // result = mapper.updateByPrimaryKey(entity);
         entity = mapper.selectByPrimaryKey(id);
         System.out.println("select 2:" + entity.getName());
     }

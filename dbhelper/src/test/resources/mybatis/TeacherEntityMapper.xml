@@ -68,4 +68,13 @@
       age = #{age,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="test" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    a.id, a.name, a.age
+    from teachers a
+    left join students b on a.id=b.id
+    where a.id = #{id,jdbcType=INTEGER}
+  </select>
+  
 </mapper>

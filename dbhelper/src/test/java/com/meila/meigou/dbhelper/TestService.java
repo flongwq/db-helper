@@ -43,27 +43,22 @@ public class TestService {
     @Test
     public void testUpdate() {
         // StudentEntity entity = service.get(1);
-        StudentEntity entity = new StudentEntity();
-        entity.setId(1);
-        entity.setName("flongnew");
-        entity.setScore(30);
-        service.update(entity);
+        try {
+            StudentEntity entity = new StudentEntity();
+            entity.setId(1);
+            entity.setName("ddd");
+            service.update(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println("ok");
     }
 
     @Test
     public void test() {
         try {
-            service.transaction(1);
-            // StudentEntity entity = service.get(1);
-            // System.out.println("select 1:" + entity.getName());
-            // entity.setId(1);
-            // entity.setName("flongnew");
-            // entity.setScore(30);
-            // service.update(entity);
-            // System.out.println("update:" + entity.getName());
-            // entity = service.get(1);
-            // System.out.println("select 2:" + entity.getName());
+            // service.transaction(1);
+            service.transaction2(1);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -303,6 +303,7 @@ public class ReadWriteSqlSessionTemplate extends SqlSessionTemplate {
 
     private class SqlSessionInterceptor implements InvocationHandler {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            System.out.println("method:" + method.getName());
             final SqlSession sqlSession = getSqlSession(ReadWriteSqlSessionTemplate.this.getSqlSessionFactory(),
                 ReadWriteSqlSessionTemplate.this.executorType, ReadWriteSqlSessionTemplate.this.exceptionTranslator);
             try {

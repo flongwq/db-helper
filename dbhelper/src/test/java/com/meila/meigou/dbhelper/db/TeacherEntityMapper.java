@@ -1,7 +1,5 @@
 package com.meila.meigou.dbhelper.db;
 
-import com.meila.meigou.dbhelper.db.TeacherEntity;
-
 public interface TeacherEntityMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +12,6 @@ public interface TeacherEntityMapper {
     int updateByPrimaryKeySelective(TeacherEntity record);
 
     int updateByPrimaryKey(TeacherEntity record);
+
+    TeacherEntity test(Integer id);
 }
