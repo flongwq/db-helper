@@ -98,7 +98,7 @@ public class DataSourceReadWriteProcessor implements BeanPostProcessor {
         try {
             return pjp.proceed();
         } finally {
-            DataSourceHolder.clear();
+            // DataSourceHolder.clear();
         }
 
     }

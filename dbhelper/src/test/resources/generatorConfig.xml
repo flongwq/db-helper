@@ -16,7 +16,7 @@
     <sqlMapGenerator targetPackage="mybatis" targetProject="dbhelper/src/test/resources" />
     <!-- mapper.java -->
     <javaClientGenerator targetPackage="com.meila.meigou.dbhelper.db" targetProject="dbhelper/src/main/java" type="XMLMAPPER" />
-<table  tableName="students" domainObjectName="StudentEntity" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+<table  tableName="teachers" domainObjectName="TeacherEntity" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
     </table>
   </context>
 </generatorConfiguration>

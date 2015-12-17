@@ -20,7 +20,7 @@
         http://www.springframework.org/schema/aop/spring-aop.xsd
        http://mybatis.org/schema/mybatis-spring
         http://mybatis.org/schema/mybatis-spring.xsd" 
-        default-autowire="byType">
+        default-autowire="byName">
 	
 	<tx:annotation-driven />
 	<context:annotation-config />
@@ -80,11 +80,33 @@
 		<property name="dataSource" ref="dataSource" />  
 	</bean>
 
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
+	<bean id="masterSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="masterDataSource" />
 		<property name="configLocation" value="classpath:/mybatis-config.xml" />
 		<property name="mapperLocations" value="classpath:mybatis/*Mapper.xml" />
 	</bean>
+	<bean id="slave01SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="slaveDataSource01" />
+		<property name="configLocation" value="classpath:/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mybatis/*Mapper.xml" />
+	</bean>
+	<bean id="slave02SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="slaveDataSource02" />
+		<property name="configLocation" value="classpath:/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mybatis/*Mapper.xml" />
+	</bean>
+	
+	<bean id="sqlSessionTemplate" class="com.meila.meigou.dbhelper.ReadWriteSqlSessionTemplate" scope="prototype">
+		<constructor-arg ref="masterSqlSessionFactory" />
+        <property name="slaveSqlSessionFactorys">
+        	<list>
+				<ref bean="slave01SqlSessionFactory" />
+				<ref bean="slave02SqlSessionFactory" />
+			</list>
+        </property>
+        <property name="selector" ref="sqlSessionFactorySelector"></property>
+    </bean>
+	<bean id="sqlSessionFactorySelector" class="com.meila.meigou.dbhelper.SequenceSqlSessionFactorySelector" />
 	
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
@@ -103,10 +125,8 @@
 	</aop:config>
 	
 	<aop:config expose-proxy="true">
-<!-- 		<aop:pointcut id="pointcutDao" -->
-<!-- 			expression="execution(* com.meila.meigou.dbhelper.db.StudentEntityMapper.*(..))" /> -->
-<aop:pointcut id="pointcutDao"
-			expression="execution(* com.meila.meigou.dbhelper.service.*.*(..))" />
+		<aop:pointcut id="pointcutDao"
+			expression="execution(* com.meila.meigou.dbhelper.db.StudentEntityMapper.*(..))" />
     	<aop:aspect order="-2147483648" ref="readWriteProcessor">  
        		<aop:around pointcut-ref="pointcutDao" method="determineReadOrWrite"/>  
     	</aop:aspect> 
@@ -116,6 +136,6 @@
 	    <property name="forceReadOnMaster" value="false"/>  
  	</bean> 
 
-	<mybatis:scan base-package="com.meila.meigou.dbhelper.db" />
+	<mybatis:scan base-package="com.meila.meigou.dbhelper.db" template-ref="sqlSessionTemplate" />
 	
 </beans>

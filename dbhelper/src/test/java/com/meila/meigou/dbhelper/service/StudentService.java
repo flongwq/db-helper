@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.meila.meigou.dbhelper.db.StudentEntity;
 import com.meila.meigou.dbhelper.db.StudentEntityMapper;
+import com.meila.meigou.dbhelper.db.TeacherEntity;
+import com.meila.meigou.dbhelper.db.TeacherEntityMapper;
 
 /**
  ************************************************************
@@ -22,6 +24,8 @@ import com.meila.meigou.dbhelper.db.StudentEntityMapper;
 public class StudentService {
     @Autowired
     private StudentEntityMapper mapper;
+    @Autowired
+    private TeacherEntityMapper teacherEntityMapper;
 
     // @Master
     public StudentEntity get(int id) {
@@ -45,10 +49,11 @@ public class StudentService {
         System.out.println("start");
         StudentEntity entity = mapper.selectByPrimaryKey(id);
         System.out.println("select 1:" + entity.getName());
-        entity.setId(id);
-        entity.setName("flongnew");
-        mapper.updateByPrimaryKey(entity);// 更新一次
-        System.out.println("update:" + entity.getName());
+        TeacherEntity teacherEntity = new TeacherEntity();
+        teacherEntity.setId(1);
+        teacherEntity.setName("new");
+        teacherEntityMapper.updateByPrimaryKey(teacherEntity);
+        System.out.println("update:" + teacherEntity.getName());
         // delete(-100);// 异常回滚
         entity = mapper.selectByPrimaryKey(id);
         System.out.println("select 2:" + entity.getName());

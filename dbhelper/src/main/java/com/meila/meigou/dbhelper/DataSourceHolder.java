@@ -13,8 +13,8 @@ package com.meila.meigou.dbhelper;
  ************************************************************
  */
 public class DataSourceHolder {
-    public final static String MASTER = "MasterDataSource";
-    public final static String SLAVE = "SlaveDataSource";
+    public final static String MASTER = "master";
+    public final static String SLAVE = "slave";
     private static ThreadLocal<String> datasource = new ThreadLocal<String>();
 
     public static String getMaster() {
@@ -49,4 +49,7 @@ public class DataSourceHolder {
         datasource.remove();
     }
 
+    public static String get() {
+        return datasource.get();
+    }
 }
