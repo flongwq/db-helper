@@ -52,10 +52,10 @@ public class StudentService {
         StudentEntity entity = mapper.selectByPrimaryKey(id);
         System.out.println("select 1:" + entity.getName());
 
-        StudentEntity entity2 = new StudentEntity();
-        entity2.setId(1);
-        entity2.setName("new");
-        int result = mapper.updateByPrimaryKey(entity2);
+        // StudentEntity entity2 = new StudentEntity();
+        entity.setId(1);
+        entity.setName("new");
+        int result = mapper.updateByPrimaryKey(entity);
         System.out.println("update:" + result);
         //
         // entity = mapper.selectByPrimaryKey(id);
