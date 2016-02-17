@@ -33,27 +33,13 @@ public class DataSourceAspect {
 
     @Around("masterPoint()")
     public Object master(ProceedingJoinPoint pjp) throws Throwable {
-        Object[] arguments = pjp.getArgs();
         DataSourceHolder.setMaster();
-        Object result = null;
-        if ((arguments != null) && (arguments.length != 0)) {
-            result = pjp.proceed(arguments);
-        } else {
-            result = pjp.proceed();
-        }
-        return result;
+        return pjp.proceed();
     }
 
     @Around("slavePoint()")
     public Object slave(ProceedingJoinPoint pjp) throws Throwable {
-        Object[] arguments = pjp.getArgs();
         DataSourceHolder.setSlave();
-        Object result = null;
-        if ((arguments != null) && (arguments.length != 0)) {
-            result = pjp.proceed(arguments);
-        } else {
-            result = pjp.proceed();
-        }
-        return result;
+        return pjp.proceed();
     }
 }

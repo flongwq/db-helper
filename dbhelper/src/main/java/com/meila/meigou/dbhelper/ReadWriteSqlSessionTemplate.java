@@ -85,7 +85,7 @@ public class ReadWriteSqlSessionTemplate extends SqlSessionTemplate {
         }
         if (DataSourceHolder.isSlave()) {
             targetSqlSessionFactory = selector.select(slaveSqlSessionFactorys);
-            System.out.println("选择器运行");
+            // System.out.println("选择器运行");
         }
         if (targetSqlSessionFactory != null) {
             return targetSqlSessionFactory;
