@@ -39,6 +39,8 @@ public class DataSourceReadWriteProcessor implements BeanPostProcessor {
 
     public void setForceReadOnMaster(boolean forceReadOnMaster) {
         this.forceReadOnMaster = forceReadOnMaster;
+        // 设置全局变量
+        DataSourceHolder.FORCE_ON_MASTER = forceReadOnMaster;
     }
 
     @SuppressWarnings("unchecked")
@@ -107,9 +109,6 @@ public class DataSourceReadWriteProcessor implements BeanPostProcessor {
     }
 
     private boolean isReadOnMaster(String methodName) {
-        if (DataSourceHolder.onTransaction()) {// 有强制事物的指定到master
-            return true;
-        }
         String bestNameMatch = null;
         for (String mappedName : this.readMethodMap.keySet()) {
             if (isMatch(methodName, mappedName)) {

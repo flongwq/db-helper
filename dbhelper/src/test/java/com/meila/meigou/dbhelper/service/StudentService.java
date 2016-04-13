@@ -6,7 +6,6 @@ package com.meila.meigou.dbhelper.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.meila.meigou.dbhelper.annotation.Master;
 import com.meila.meigou.dbhelper.db.StudentEntity;
 import com.meila.meigou.dbhelper.db.StudentEntityMapper;
 import com.meila.meigou.dbhelper.db.TeacherEntity;
@@ -47,7 +46,6 @@ public class StudentService {
 
     }
 
-    @Master
     public void transaction(int id) throws Exception {
         // 先查询
         System.out.println("start");

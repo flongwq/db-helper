@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.alibaba.fastjson.JSON;
 import com.meila.meigou.dbhelper.db.StudentEntity;
 import com.meila.meigou.dbhelper.service.StudentService;
 
@@ -35,7 +36,7 @@ public class TestService {
     public void testGet() {
         for (int i = 0; i < 10; i++) {
             StudentEntity entity = service.get(1);
-            System.out.println(entity.getName());
+            System.out.println(JSON.toJSONString(entity));
         }
 
     }

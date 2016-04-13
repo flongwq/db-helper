@@ -121,7 +121,7 @@
 	<bean id="readWriteProcessor" class="com.meila.meigou.dbhelper.DataSourceReadWriteProcessor">  
 	    <property name="forceReadOnMaster" value="true"/>
  	</bean> 
-
+	<bean id="dbHelperServiceAspect" class="com.meila.meigou.dbhelper.ServiceAspect" />   
 	
 	
 </beans>

@@ -15,6 +15,7 @@ package com.meila.meigou.dbhelper;
 public class DataSourceHolder {
     public final static String MASTER = "master";
     public final static String SLAVE = "slave";
+    public static boolean FORCE_ON_MASTER = false;// 全局变量
     public final static String TRANSACTION_ON = "on";
     public final static String TRANSACTION_OFF = "off";
     private static ThreadLocal<String> datasource = new ThreadLocal<String>();

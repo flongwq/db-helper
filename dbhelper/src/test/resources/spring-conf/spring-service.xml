@@ -26,8 +26,16 @@
 	<context:annotation-config />
 	<aop:aspectj-autoproxy />
 	
-<!-- 	<context:component-scan base-package="com.meila.meigou.dbhelper.service" > -->
-<!-- 	</context:component-scan> -->
+	<context:component-scan base-package="com.meila.meigou.dbhelper" >
+	</context:component-scan>
 	<bean id="studentService" class="com.meila.meigou.dbhelper.service.StudentService"></bean>
 	
+	<!-- 如果spring-db中配置了forceReadOnMaster=true，必须配合以下配置生效 -->
+	<aop:config>
+    	<aop:pointcut id="pointcutService"
+			expression="execution(* com.meila.meigou.dbhelper.TestService.*(..)) || execution(* com.meila.meigou.dbhelper.service.*.*(..))" />
+    	<aop:aspect ref="dbHelperServiceAspect">  
+       		<aop:around pointcut-ref="pointcutService" method="doService"/>  
+    	</aop:aspect> 
+	</aop:config>
 </beans>
