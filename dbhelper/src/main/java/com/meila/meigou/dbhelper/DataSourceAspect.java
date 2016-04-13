@@ -32,14 +32,17 @@ public class DataSourceAspect {
     }
 
     @Around("masterPoint()")
-    public Object master(ProceedingJoinPoint pjp) throws Throwable {
+    public void master(ProceedingJoinPoint pjp) throws Throwable {
         DataSourceHolder.setMaster();
-        return pjp.proceed();
+        DataSourceHolder.setFlag(DataSourceHolder.TRANSACTION_ON);
+        pjp.proceed();
+        DataSourceHolder.clear();
     }
 
     @Around("slavePoint()")
-    public Object slave(ProceedingJoinPoint pjp) throws Throwable {
+    public void slave(ProceedingJoinPoint pjp) throws Throwable {
         DataSourceHolder.setSlave();
-        return pjp.proceed();
+        pjp.proceed();
+        DataSourceHolder.clear();
     }
 }

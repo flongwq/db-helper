@@ -3,7 +3,6 @@
  */
 package com.meila.meigou.dbhelper;
 
-
 /**
  ************************************************************
  * @类名 : DataSourceHolder.java
@@ -16,7 +15,10 @@ package com.meila.meigou.dbhelper;
 public class DataSourceHolder {
     public final static String MASTER = "master";
     public final static String SLAVE = "slave";
+    public final static String TRANSACTION_ON = "on";
+    public final static String TRANSACTION_OFF = "off";
     private static ThreadLocal<String> datasource = new ThreadLocal<String>();
+    private static ThreadLocal<String> transactionFlag = new ThreadLocal<String>();
 
     public static String getMaster() {
         return MASTER;
@@ -54,4 +56,15 @@ public class DataSourceHolder {
         return datasource.get();
     }
 
+    public static String getFlag() {
+        return transactionFlag.get();
+    }
+
+    public static void setFlag(String flag) {
+        transactionFlag.set(flag);
+    }
+
+    public static boolean onTransaction() {
+        return transactionFlag.get() == TRANSACTION_ON;
+    }
 }

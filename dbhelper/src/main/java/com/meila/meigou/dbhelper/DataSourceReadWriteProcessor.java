@@ -61,13 +61,14 @@ public class DataSourceReadWriteProcessor implements BeanPostProcessor {
                 String methodName = entry.getKey();
                 Boolean isReadOnMaster = Boolean.FALSE;
                 if (forceReadOnMaster) {
-                    // 强制读master
+                    // 支持当前事务，如果当前没有事务，就以非事务方式执行。
                     attr.setPropagationBehavior(Propagation.SUPPORTS.value());
                     isReadOnMaster = Boolean.TRUE;
                 } else {
+                    // 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
                     attr.setPropagationBehavior(Propagation.NOT_SUPPORTED.value());
                 }
-                logger.warn("DataSourceReadWriteProcess method:{} force read on master:{}", methodName, isReadOnMaster);
+                logger.warn("DataSourceReadWriteProcess method:{}, read on master:{}", methodName, isReadOnMaster);
                 readMethodMap.put(methodName, isReadOnMaster);
             }
         } catch (Exception e) {
@@ -98,12 +99,17 @@ public class DataSourceReadWriteProcessor implements BeanPostProcessor {
         try {
             return pjp.proceed();
         } finally {
-            DataSourceHolder.clear();
+            if (!DataSourceHolder.onTransaction()) {// 同一事物中不清理theadlocal
+                DataSourceHolder.clear();
+            }
         }
 
     }
 
     private boolean isReadOnMaster(String methodName) {
+        if (DataSourceHolder.onTransaction()) {// 有强制事物的指定到master
+            return true;
+        }
         String bestNameMatch = null;
         for (String mappedName : this.readMethodMap.keySet()) {
             if (isMatch(methodName, mappedName)) {
@@ -114,19 +120,26 @@ public class DataSourceReadWriteProcessor implements BeanPostProcessor {
         if (bestNameMatch == null) {// method的前缀没有设置过readonly，读master
             return true;
         }
+        boolean isReadOnlyConfig = false;
         Boolean isReadOnMaster = readMethodMap.get(bestNameMatch);
         if (isReadOnMaster == null) {// map中不存在method，说明method没有设置过readonly，不走从库
             return true;
+        } else {
+            isReadOnlyConfig = true;
         }
         if (isReadOnMaster == Boolean.FALSE) {// 设置过NOT_SUPPORTS事务挂起，开始读从库
             return false;
         } else {// 开启了强制读master
-            // 如果之前选择了slave 现在还选择 slave
-            if (DataSourceHolder.isSlave()) {
+            if (DataSourceHolder.isMaster() == false && DataSourceHolder.isSlave() == false) {
+                // 说明是first request，应该以tx:method配置为准
+                return !isReadOnlyConfig;
+            } else if (DataSourceHolder.isSlave()) {
+                // 如果之前选择了slave 现在还选择 slave
                 return false;
             } else {
                 return true;
             }
+
         }
     }
 

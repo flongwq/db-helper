@@ -33,7 +33,7 @@ public class TestService {
 
     @Test
     public void testGet() {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
             StudentEntity entity = service.get(1);
             System.out.println(entity.getName());
         }
@@ -42,10 +42,10 @@ public class TestService {
 
     @Test
     public void testUpdate() {
-        // StudentEntity entity = service.get(1);
+        StudentEntity entity = service.get(1);
         try {
-            StudentEntity entity = new StudentEntity();
-            entity.setId(1);
+            // StudentEntity entity = new StudentEntity();
+            // entity.setId(1);
             entity.setName("ddd");
             service.update(entity);
         } catch (Exception e) {

@@ -119,7 +119,7 @@
     	</aop:aspect> 
 	</aop:config>
 	<bean id="readWriteProcessor" class="com.meila.meigou.dbhelper.DataSourceReadWriteProcessor">  
-	    <property name="forceReadOnMaster" value="false"/>  
+	    <property name="forceReadOnMaster" value="true"/>
  	</bean> 
 
 	

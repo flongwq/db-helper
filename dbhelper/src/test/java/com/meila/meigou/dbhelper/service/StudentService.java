@@ -6,6 +6,7 @@ package com.meila.meigou.dbhelper.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.meila.meigou.dbhelper.annotation.Master;
 import com.meila.meigou.dbhelper.db.StudentEntity;
 import com.meila.meigou.dbhelper.db.StudentEntityMapper;
 import com.meila.meigou.dbhelper.db.TeacherEntity;
@@ -35,8 +36,8 @@ public class StudentService {
     // @Slave
     public void update(StudentEntity entity) {
         mapper.updateByPrimaryKey(entity);
-        entity.setName(null);
-        mapper.updateByPrimaryKey(entity);
+        // entity.setName(null);
+        // mapper.updateByPrimaryKey(entity);
     }
 
     public void delete(int id) throws Exception {
@@ -46,20 +47,21 @@ public class StudentService {
 
     }
 
+    @Master
     public void transaction(int id) throws Exception {
         // 先查询
         System.out.println("start");
         StudentEntity entity = mapper.selectByPrimaryKey(id);
         System.out.println("select 1:" + entity.getName());
 
-        // StudentEntity entity2 = new StudentEntity();
-        entity.setId(1);
-        entity.setName("new");
-        int result = mapper.updateByPrimaryKey(entity);
+        StudentEntity entity2 = new StudentEntity();
+        entity2.setId(1);
+        entity2.setName("new");
+        int result = mapper.updateByPrimaryKey(entity2);
         System.out.println("update:" + result);
-        //
-        // entity = mapper.selectByPrimaryKey(id);
-        // System.out.println("select 2:" + entity.getName());
+
+        StudentEntity entity3 = mapper.selectByPrimaryKey(id);
+        System.out.println("select 2:" + entity3.getName());
         for (int i = 0; i < 10; i++) {
             StudentEntity entityi = mapper.selectByPrimaryKey(id);
             System.out.println("select " + i + ":" + entityi.getName());
